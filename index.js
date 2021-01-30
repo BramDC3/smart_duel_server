@@ -1,40 +1,30 @@
-const server = require('http').createServer()
-const io = require('socket.io')(server)
+const server = require('http').createServer();
+const io = require('socket.io')(server);
 
-io.on('connection', function (client) {
+io.on('connection', function (socket) {
 
-    console.log('client connect...', client.id);
+    console.log('socket connect...', socket.id);
 
-    client.on('typing', function name(data) {
+    socket.on('summonEvent', function name(data) {
         console.log(data);
-        io.emit('typing', data)
-    })
+        socket.broadcast.emit('summonEvent', data);
+    });
 
-    client.on('message', function name(data) {
-        console.log(data);
-        io.emit('message', data)
-    })
+    socket.on('connect', function () {
+    });
 
-    client.on('location', function name(data) {
-        console.log(data);
-        io.emit('location', data);
-    })
+    socket.on('disconnect', function () {
+        console.log('socket disconnect...', socket.id);
+    });
 
-    client.on('connect', function () {
-    })
-
-    client.on('disconnect', function () {
-        console.log('client disconnect...', client.id)
-    })
-
-    client.on('error', function (err) {
-        console.log('received error from client:', client.id)
-        console.log(err)
-    })
-})
+    socket.on('error', function (err) {
+        console.log('received error from socket:', socket.id);
+        console.log(err);
+    });
+});
 
 var server_port = process.env.PORT || 3000;
 server.listen(server_port, function (err) {
-    if (err) throw err
+    if (err) throw err;
     console.log('Listening on port %d', server_port);
 });
