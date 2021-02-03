@@ -16,7 +16,7 @@ io.on('connection', function (socket) {
         console.log(err);
     });
 });
-var server_port = process.env.PORT || 3000;
+var server_port = process.env.PORT || 52300;
 server.listen(server_port, function (err) {
     if (err)
         throw err;

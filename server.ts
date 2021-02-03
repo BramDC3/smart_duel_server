@@ -21,7 +21,7 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-const server_port = process.env.PORT || 3000;
+const server_port = process.env.PORT || 52300;
 server.listen(server_port, function (err: any) {
     if (err) throw err;
     console.log('Listening on port %d', server_port);
