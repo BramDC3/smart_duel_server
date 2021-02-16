@@ -8,6 +8,10 @@ io.on('connection', function (socket) {
         console.log(data);
         socket.broadcast.emit('summonEvent', data);
     });
+    socket.on('removeCardEvent', function (data) {
+        console.log(data);
+        socket.broadcast.emit('removeCardEvent', data);
+    });
     socket.on('disconnect', function () {
         console.log('socket disconnect...', socket.id);
     });

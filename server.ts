@@ -11,6 +11,11 @@ io.on('connection', (socket: Socket) => {
         socket.broadcast.emit('summonEvent', data);
     });
 
+    socket.on('removeCardEvent', (data) => {
+        console.log(data);
+        socket.broadcast.emit('removeCardEvent', data);
+    });
+
     socket.on('disconnect', () => {
         console.log('socket disconnect...', socket.id);
     });
