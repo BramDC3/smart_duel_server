@@ -1,24 +1,47 @@
-# Source 1: https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
-# Source 2: https://itnext.io/dockerize-a-typescript-app-in-15-mins-a0e8c1e904b3
-FROM node:10
+FROM node:14.16.0-alpine AS base
 
-# Create app directory
-WORKDIR /usr/src/app
+# Create '/app' folder and change owner to 'node'
+RUN mkdir /app && chown -R node:node /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json
-# are copied where available (npm@5+)
-COPY package*.json ./
+# Set working directory 
+WORKDIR /app
 
-# If you are building your code for production
-# RUN npm ci --only=production
-RUN npm install
+# Set user
+USER node
 
-# Bundle app source
-COPY . .
+# Copy files with 'node' as owner
+COPY --chown=node:node package.json yarn.lock ./
+# Install dependencies
+RUN yarn install
+# Copy files with 'node' as owner
+COPY --chown=node:node . .
+# Compile TypeScript
+RUN yarn build
+CMD ["node", "dist/index.js"]
 
-# Compile TypeScript to JavaScript
-RUN npm run tsc
 
+FROM node:14.15.0-alpine AS prod
+# Set 'NODE_ENV'
+ENV NODE_ENV=production
+
+# Expose port
 EXPOSE 52300
-CMD [ "node", "server.js" ]
+
+# Create '/app' folder and change owner to 'node'
+RUN mkdir /app && chown -R node:node /app
+
+# Set working directory 
+WORKDIR /app
+
+# Set user
+USER node
+# Copy files from first step
+COPY --from=base --chown=node:node /app/package.json /app/yarn.lock ./
+# Install dependencies
+RUN yarn install --production --frozen-lockfile && yarn cache clean
+# Copy files from first step
+COPY --from=base --chown=node:node /app/config ./config
+# Copy files from first step
+COPY --from=base --chown=node:node /app/dist ./dist
+
+CMD ["node", "dist/index.js"]

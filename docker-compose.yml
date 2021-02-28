@@ -1,4 +1,4 @@
-version: "3"
+version: '3.8'
 networks:
   api_server_default:
     external: true
@@ -9,7 +9,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      ENV_NAME: dev
     ports:
       - 52300:52300
