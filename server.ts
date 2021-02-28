@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 
 const server = require('http').createServer();
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, { pingTimeout: 60000, pingInterval: 4000});
 
 io.on('connection', (socket: Socket) => {
     console.log('socket connect...', socket.id);
@@ -26,7 +26,7 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-const server_port = process.env.PORT || 52300;
+const server_port = process.env.PORT || 8080;
 server.listen(server_port, function (err: any) {
     if (err) throw err;
     console.log('Listening on port %d', server_port);

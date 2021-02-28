@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var server = require('http').createServer();
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, { pingTimeout: 60000, pingInterval: 4000 });
 io.on('connection', function (socket) {
     console.log('socket connect...', socket.id);
     socket.on('summonEvent', function (data) {
@@ -20,7 +20,7 @@ io.on('connection', function (socket) {
         console.log(err);
     });
 });
-var server_port = process.env.PORT || 52300;
+var server_port = process.env.PORT || 8080;
 server.listen(server_port, function (err) {
     if (err)
         throw err;
