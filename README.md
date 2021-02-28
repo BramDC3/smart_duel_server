@@ -18,14 +18,18 @@ Yes! If you're interested in helping out, send me a message on [our Discord serv
 
 ## Getting started
 
-1. Download Docker at [docker.com][Docker download]
-3. Run the app using the Docker composer
+1. Download Node.js at [nodejs.org][Nodejs download]
+2. Install the dependencies
    ```sh
-   docker-compose up
+   npm install
+   ```
+3. Start the server
+   ```sh
+   node server.js
    ```
 
 [Smart Duel Disk]: https://github.com/BramDC3/smart_duel_disk
 [Smart Duel Gazer]: https://github.com/BramDC3/smart_duel_gazer
 [Socket.io website]: https://socket.io/
 [Discord link]: https://discord.gg/XCcfcbBcjE
-[Docker download]: https://www.docker.com/get-started
+[Nodejs download]: https://nodejs.org/en/download/
