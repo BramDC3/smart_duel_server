@@ -1,0 +1,5 @@
+{
+  "SERVER_PORT": 8080,
+  "SERVER_HOSTNAME": "0.0.0.0",
+  "LOGGING_LEVEL": "verbose"
+} 
