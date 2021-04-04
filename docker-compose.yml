@@ -1,4 +1,4 @@
-version: "3"
+version: '3.8'
 networks:
   api_server_default:
     external: true
