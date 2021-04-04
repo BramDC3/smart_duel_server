@@ -4,13 +4,13 @@ var server = require('http').createServer();
 var io = require('socket.io')(server, { pingTimeout: 60000, pingInterval: 4000 });
 io.on('connection', function (socket) {
     console.log('socket connect...', socket.id);
-    socket.on('summonEvent', function (data) {
+    socket.on('card:play', function (data) {
         console.log(data);
-        socket.broadcast.emit('summonEvent', data);
+        socket.broadcast.emit('card:play', data);
     });
-    socket.on('removeCardEvent', function (data) {
+    socket.on('card:remove', function (data) {
         console.log(data);
-        socket.broadcast.emit('removeCardEvent', data);
+        socket.broadcast.emit('card:remove', data);
     });
     socket.on('disconnect', function () {
         console.log('socket disconnect...', socket.id);

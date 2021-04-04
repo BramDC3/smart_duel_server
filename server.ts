@@ -1,19 +1,19 @@
 import { Socket } from "socket.io";
 
 const server = require('http').createServer();
-const io = require('socket.io')(server, { pingTimeout: 60000, pingInterval: 4000});
+const io = require('socket.io')(server, { pingTimeout: 60000, pingInterval: 4000 });
 
 io.on('connection', (socket: Socket) => {
     console.log('socket connect...', socket.id);
 
-    socket.on('summonEvent', (data) => {
+    socket.on('card:play', (data) => {
         console.log(data);
-        socket.broadcast.emit('summonEvent', data);
+        socket.broadcast.emit('card:play', data);
     });
 
-    socket.on('removeCardEvent', (data) => {
+    socket.on('card:remove', (data) => {
         console.log(data);
-        socket.broadcast.emit('removeCardEvent', data);
+        socket.broadcast.emit('card:remove', data);
     });
 
     socket.on('disconnect', () => {
