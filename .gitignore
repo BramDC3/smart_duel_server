@@ -22,7 +22,7 @@ coverage
 # API keys and secrets
 .env
 
-# Dependency directory
+# Dependencies
 node_modules
 bower_components
 
@@ -37,6 +37,6 @@ Thumbs.db
 # Ignore built ts files
 dist/**/*
 
-# ignore yarn.lock
+# Ignore lock files
 yarn.lock
 package-lock.json
