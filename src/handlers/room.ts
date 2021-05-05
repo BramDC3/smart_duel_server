@@ -15,7 +15,6 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
         socket.emit('roomName', roomName);
 
         socket.join(roomName);
-        socket.number = 1;
         socket.emit('init', 1);
 
         console.log(`Room ${roomName} created by socket ${socket.id}`);
@@ -46,7 +45,6 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
 
         clientRooms.set(socket.id, roomName);
         socket.join(roomName);
-        socket.number = 2;
         socket.emit('init', 2);
 
         console.log(`Room ${roomName} joined by by socket ${socket.id}`);
