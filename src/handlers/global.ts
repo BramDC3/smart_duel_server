@@ -5,12 +5,12 @@ const ERROR_EVENT = 'error';
 
 const registerGlobalHandlers = (socket: Socket) => {
     const disconnect = () => {
-        console.log(`Disconnecting socket ${socket.id}...`);
+        console.log(`Socket disconnected: ${socket.id}...`);
     };
 
     const error = (error: any) => {
         console.log(error);
-        console.log(`Error received from socket ${socket.id}`);
+        console.log(`Socket error: ${socket.id}`);
     };
 
     socket.on(DISCONNECT_EVENT, disconnect);

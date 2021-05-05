@@ -2,15 +2,17 @@ import type { Server } from 'socket.io';
 
 import registerGlobalHandlers from './global';
 import registerCardHandlers from './cards';
+import registerRoomHandlers from './room';
 
 const CONNECTION_EVENT = 'connection';
 
-const registerHandlers = (socket: Server) => {
-    socket.on(CONNECTION_EVENT, (socket) => {
-        console.log(`Socket connect: ${socket.id}`, );
+const registerHandlers = (server: Server) => {
+    server.on(CONNECTION_EVENT, (socket) => {
+        console.log(`Socket connected: ${socket.id}`,);
 
         registerGlobalHandlers(socket);
         registerCardHandlers(socket);
+        registerRoomHandlers(socket, server);
     });
 };
 
