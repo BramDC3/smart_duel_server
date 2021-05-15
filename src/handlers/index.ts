@@ -9,7 +9,7 @@ const CONNECTION_EVENT = 'connection';
 
 const registerHandlers = (server: Server) => {
     server.on(CONNECTION_EVENT, (socket) => {
-        console.log(`Socket connected: ${socket.id}`,);
+        console.log(`Socket connected: ${socket.id}`);
 
         registerGlobalHandlers(socket);
         registerGlobalDuelHandlers(socket);
