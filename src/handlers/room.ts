@@ -8,7 +8,7 @@ const ENTER_ROOM_EVENT = 'room:enter';
 
 const registerRoomHandlers = (socket: Socket, server: Server) => {
     const createRoom = () => {
-        const roomName = makeId(5);
+        const roomName = makeId(globals.ROOM_ID_MAX_CHARACTERS);
 
         globals.clientRooms.set(socket.id, roomName);
         socket.emit('roomName', roomName);

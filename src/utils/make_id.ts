@@ -1,14 +1,9 @@
-const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+import { v5 as hashV5 } from "uuid";
 
-// TODO: find a better way to make ids
-const makeId = (length: number) => {
-    let id = '';
-
-    for (let i = 0; i < length; i++) {
-        id += CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length));
-    }
-
-    return id;
+function makeId(length: number) {
+    const now = (new Date()).getTime();
+    const hash = hashV5(now.toString(), "/");
+    return hash.substring(0, length);
 }
 
 export default makeId;
