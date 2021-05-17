@@ -8,7 +8,7 @@ const ENTER_ROOM_EVENT = 'room:enter';
 
 const registerRoomHandlers = (socket: Socket, server: Server) => {
     const createRoom = () => {
-        const roomName = makeId(globals.ROOM_ID_MAX_CHARACTERS);
+        const roomName = makeId();
 
         globals.clientRooms.set(socket.id, roomName);
         socket.emit('roomName', roomName);
@@ -21,13 +21,13 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
 
     const listRooms = () => {
         const rooms = server.sockets.adapter.rooms;
-        const allRoomsAvailable = [];
+        const allRoomsAvailable: string[] = [];
 
-        for (const room in rooms) {
-            if (rooms[room].length === 1) {
-                allRoomsAvailable.push(room);
+        globals.clientRooms.forEach((roomName) => {
+            if (rooms[roomName].length === 1) {
+                allRoomsAvailable.push(roomName);
             }
-        }
+        });
 
         socket.emit('availableRooms', JSON.stringify(allRoomsAvailable));
     };
