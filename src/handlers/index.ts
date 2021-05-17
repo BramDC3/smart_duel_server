@@ -6,7 +6,7 @@ import registerRoomHandlers from './room';
 
 const CONNECTION_EVENT = 'connection';
 
-const registerHandlers = (server: Server) => {
+const registerHandlers = (server: Server): void => {
     server.on(CONNECTION_EVENT, (socket) => {
         console.log(`Socket connected: ${socket.id}`,);
 

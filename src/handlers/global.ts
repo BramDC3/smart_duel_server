@@ -3,7 +3,7 @@ import type { Socket } from 'socket.io';
 const DISCONNECT_EVENT = 'disconnect';
 const ERROR_EVENT = 'error';
 
-const registerGlobalHandlers = (socket: Socket) => {
+const registerGlobalHandlers = (socket: Socket): void => {
     const disconnect = () => {
         console.log(`Socket disconnected: ${socket.id}...`);
     };

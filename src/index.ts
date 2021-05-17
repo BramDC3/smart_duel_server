@@ -1,10 +1,9 @@
 import http from 'http';
 import config from 'config';
+import createSocket from './socket';
 
 const SERVER_PORT = config.get<number>('SERVER_PORT');
 const SERVER_HOSTNAME = config.get<string>('SERVER_HOSTNAME');
-
-import createSocket from './socket';
 
 (async (): Promise<void> => {
     try {

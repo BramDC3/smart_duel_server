@@ -1,7 +1,7 @@
 const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 // TODO: find a better way to make ids
-const makeId = (length: number) => {
+const makeId = (length: number): string => {
     let id = '';
 
     for (let i = 0; i < length; i++) {

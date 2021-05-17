@@ -3,7 +3,7 @@ import type { Socket } from 'socket.io';
 const PLAY_CARD_EVENT = 'card:play';
 const REMOVE_CARD_EVENT = 'card:remove';
 
-const registerCardHandlers = (socket: Socket) => {
+const registerCardHandlers = (socket: Socket): void => {
     const playCard = (data: any) => {
         console.log(data);
         socket.broadcast.emit(PLAY_CARD_EVENT, data);

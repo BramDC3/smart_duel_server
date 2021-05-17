@@ -7,7 +7,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "concurrently --kill-others --names \"BUILD,RUN\" -c \"bgBlue.bold,bgMagenta.bold\" \"tsc -w\" \"nodemon -q -w dist dist/index.js\"",
         "start": "concurrently --kill-others --names \"BUILD,RUN\" -c \"bgBlue.bold,bgMagenta.bold\" \"tsc -w\" \"nodemon -q -w dist dist/index.js\"",
-        "build": "tsc"
+        "build": "tsc",
+        "lint": "eslint . --ext .ts",
+        "format": "eslint . --ext .ts --fix"
     },
     "author": "Bram De Coninck",
     "license": "ISC",
@@ -17,14 +19,24 @@
     "dependencies": {
         "@types/config": "^0.0.38",
         "config": "^3.3.4",
+        "husky": "^6.0.0",
         "nodemon": "^2.0.7",
         "socket.io": "^2.3.0"
     },
     "devDependencies": {
         "@types/node": "^14.14.22",
         "@types/socket.io": "^2.1.13",
+        "@typescript-eslint/eslint-plugin": "^4.24.0",
+        "@typescript-eslint/parser": "^4.24.0",
         "concurrently": "^6.0.0",
+        "eslint": "^7.26.0",
+        "prettier": "^2.3.0",
         "typescript": "^4.2.2"
     },
-    "repository": "https://github.com/BramDC3/smart_duel_server.git"
+    "repository": "https://github.com/BramDC3/smart_duel_server.git",
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn lint"
+        }
+    }
 }
