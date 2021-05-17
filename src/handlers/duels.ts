@@ -1,30 +1,30 @@
 import { Socket } from "socket.io";
-import { sendMessageToOpponent } from "../services/socketsService";
+import { sendMessageUsersInRoom } from "../services/socketsService";
 
 const ADMIT_DEFEAT = "duel:admit_defeat";
 const LIFE_POINTS_CHANGING = "duel:life_points_changed";
 const MONSTERS_BATTLE = "duel:monsters_battle";
 const OPPONENTS_LIFE_POINTS_CHANGING = "duel:opponent_life_points_changing";
 
-const registerGlobalDuelHandlers = (socket: Socket) => {
+const registerDuelHandlers = (socket: Socket) => {
     const opponentLifePointsChanged = (data: string) => {
         console.log(data);
-        sendMessageToOpponent(socket, OPPONENTS_LIFE_POINTS_CHANGING, data);
+        sendMessageUsersInRoom(socket, OPPONENTS_LIFE_POINTS_CHANGING, data);
     };
     
     const lifePointsChanged = (data: string) => {
         console.log(data);
-        sendMessageToOpponent(socket, LIFE_POINTS_CHANGING, data);
+        sendMessageUsersInRoom(socket, LIFE_POINTS_CHANGING, data);
     };
 
     const monstersBattle = (data: string) => {
         // Battle between two cards
         console.log(data);
-        sendMessageToOpponent(socket, MONSTERS_BATTLE, data);
+        sendMessageUsersInRoom(socket, MONSTERS_BATTLE, data);
     };
 
     const admitDefeat = () => {
-        sendMessageToOpponent(socket, ADMIT_DEFEAT, "");
+        sendMessageUsersInRoom(socket, ADMIT_DEFEAT, "");
     };
 
     socket.on(ADMIT_DEFEAT, admitDefeat);
@@ -33,4 +33,4 @@ const registerGlobalDuelHandlers = (socket: Socket) => {
     socket.on(OPPONENTS_LIFE_POINTS_CHANGING, opponentLifePointsChanged);
 };
 
-export default registerGlobalDuelHandlers;
+export default registerDuelHandlers;

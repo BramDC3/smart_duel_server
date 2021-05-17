@@ -10,7 +10,7 @@ function getSocketRoom(id: string): string {
     return room;
 }
 
-export function sendMessageToOpponent(socket: Socket, message: string, datas: any) {
+export function sendMessageUsersInRoom(socket: Socket, message: string, datas: any) {
     try {
         socket.to(getSocketRoom(socket.id)).emit(message, datas);
     } catch (exception) {
