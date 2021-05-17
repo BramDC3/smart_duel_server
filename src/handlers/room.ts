@@ -1,17 +1,16 @@
 import type { Socket, Server } from 'socket.io';
-
+import globals from "../globals";
 import makeId from '../utils/make_id';
 
 const CREATE_ROOM_EVENT = 'room:create';
+const LIST_ROOMS_EVENT = 'room:list';
 const ENTER_ROOM_EVENT = 'room:enter';
-
-const clientRooms = new Map<string, string>();
 
 const registerRoomHandlers = (socket: Socket, server: Server) => {
     const createRoom = () => {
-        const roomName = makeId(5);
+        const roomName = makeId();
 
-        clientRooms.set(socket.id, roomName);
+        globals.clientRooms.set(socket.id, roomName);
         socket.emit('roomName', roomName);
 
         socket.join(roomName);
@@ -20,17 +19,25 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
         console.log(`Room ${roomName} created by socket ${socket.id}`);
     };
 
+    const listRooms = () => {
+        const rooms = server.sockets.adapter.rooms;
+        const allRoomsAvailable: string[] = [];
+
+        globals.clientRooms.forEach((roomName) => {
+            if (rooms[roomName].length === 1) {
+                allRoomsAvailable.push(roomName);
+            }
+        });
+
+        socket.emit('availableRooms', JSON.stringify(allRoomsAvailable));
+    };
+
     const enterRoom = (roomName: string) => {
         const room = server.sockets.adapter.rooms[roomName];
-
-        let allUsers;
-        if (room) {
-            allUsers = room.sockets;
-        }
-
         let numClients = 0;
-        if (allUsers) {
-            numClients = Object.keys(allUsers).length;
+
+        if (room) {
+            numClients = room.length;
         }
 
         if (numClients === 0) {
@@ -43,7 +50,7 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
             return;
         }
 
-        clientRooms.set(socket.id, roomName);
+        globals.clientRooms.set(socket.id, roomName);
         socket.join(roomName);
         socket.emit('init', 2);
 
@@ -51,6 +58,7 @@ const registerRoomHandlers = (socket: Socket, server: Server) => {
     };
 
     socket.on(CREATE_ROOM_EVENT, createRoom);
+    socket.on(LIST_ROOMS_EVENT, listRooms);
     socket.on(ENTER_ROOM_EVENT, enterRoom);
 };
 

@@ -1,4 +1,5 @@
 import type { Socket } from 'socket.io';
+import { sendMessageUsersInRoom } from '../services/sockets_service';
 
 const PLAY_CARD_EVENT = 'card:play';
 const REMOVE_CARD_EVENT = 'card:remove';
@@ -6,12 +7,12 @@ const REMOVE_CARD_EVENT = 'card:remove';
 const registerCardHandlers = (socket: Socket) => {
     const playCard = (data: any) => {
         console.log(data);
-        socket.broadcast.emit(PLAY_CARD_EVENT, data);
+        sendMessageUsersInRoom(socket, PLAY_CARD_EVENT, data);
     };
 
     const removeCard = (data: any) => {
         console.log(data);
-        socket.broadcast.emit(REMOVE_CARD_EVENT, data);
+        sendMessageUsersInRoom(socket, REMOVE_CARD_EVENT, data);
     };
 
     socket.on(PLAY_CARD_EVENT, playCard);
