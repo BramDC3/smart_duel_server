@@ -1,5 +1,5 @@
 import type { Socket } from 'socket.io';
-import { sendMessageUsersInRoom } from '../services/socketsService';
+import { sendMessageUsersInRoom } from '../services/sockets_service';
 
 const PLAY_CARD_EVENT = 'card:play';
 const REMOVE_CARD_EVENT = 'card:remove';

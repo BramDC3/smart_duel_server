@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { sendMessageUsersInRoom } from "../services/socketsService";
+import { sendMessageUsersInRoom } from "../services/sockets_service";
 
 const ADMIT_DEFEAT = "duel:admit_defeat";
 const LIFE_POINTS_CHANGING = "duel:life_points_changed";
