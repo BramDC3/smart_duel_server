@@ -5,6 +5,7 @@ import RoomEventData from '../models/room_event_data';
 
 const CREATE_ROOM_EVENT = 'room:create';
 const JOIN_ROOM_EVENT = 'room:join';
+const CLOSE_ROOM_EVENT = 'room:close';
 
 const clientRooms = new Map<string, string>();
 
@@ -20,6 +21,14 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         }));
 
         console.log(`Room ${roomName} created by socket ${socket.id}`);
+    };
+
+    const closeRoom = (data: any) => {
+        const roomEventData: RoomEventData = JSON.parse(data);
+        const roomName = roomEventData.roomName;
+
+        clientRooms.delete(roomName);
+        // TODO: let all sockets leave this room
     };
 
     const joinRoom = (data: any) => {
