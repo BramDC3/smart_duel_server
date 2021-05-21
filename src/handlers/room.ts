@@ -1,7 +1,6 @@
 import type { Socket, Server } from 'socket.io';
 
 import makeId from '../utils/make_id';
-import RoomEventData from '../models/room_event_data';
 
 const CREATE_ROOM_EVENT = 'room:create';
 const JOIN_ROOM_EVENT = 'room:join';
@@ -23,18 +22,25 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         console.log(`Room ${roomName} created by socket ${socket.id}`);
     };
 
-    const closeRoom = (data: any) => {
-        const roomEventData: RoomEventData = JSON.parse(data);
+    const closeRoom = (roomEventData: any) => {
         const roomName = roomEventData.roomName;
 
         clientRooms.delete(roomName);
-        // TODO: let all sockets leave this room
+
+        server.sockets.in(roomName).emit(CLOSE_ROOM_EVENT, JSON.stringify({
+            'roomName': roomName,
+        }));
+
+        const room = server.sockets.adapter.rooms[roomName];
+        if (room) {
+            Object.keys(room.sockets).forEach((id) => server.sockets.connected[id].leave(roomName));
+        }
+
+        console.log(`Room ${roomName} was closed`);
     };
 
-    const joinRoom = (data: any) => {
-        const roomEventData: RoomEventData = JSON.parse(data);
+    const joinRoom = (roomEventData: any) => {
         const roomName = roomEventData.roomName;
-
         const room = server.sockets.adapter.rooms[roomName];
 
         let allUsers;
@@ -48,7 +54,10 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         }
 
         if (numClients === 0) {
+            console.log(`Socket ${socket.id} could not join room ${roomName}: roomNotFound`);
+
             socket.emit(JOIN_ROOM_EVENT, JSON.stringify({
+                'roomName': roomName,
                 'ready': false,
                 'error': 'roomNotFound'
             }));
@@ -56,7 +65,10 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         }
 
         if (numClients > 1) {
+            console.log(`Socket ${socket.id} could not join room ${roomName}: tooManyPlayers`);
+
             socket.emit(JOIN_ROOM_EVENT, JSON.stringify({
+                'roomName': roomName,
                 'ready': false,
                 'error': 'tooManyPlayers'
             }));
@@ -67,6 +79,7 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         socket.join(roomName);
 
         server.sockets.in(roomName).emit(JOIN_ROOM_EVENT, JSON.stringify({
+            'roomName': roomName,
             'ready': true
         }));
 
@@ -74,6 +87,7 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
     };
 
     socket.on(CREATE_ROOM_EVENT, createRoom);
+    socket.on(CLOSE_ROOM_EVENT, closeRoom);
     socket.on(JOIN_ROOM_EVENT, joinRoom);
 };
 
