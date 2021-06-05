@@ -1,12 +1,11 @@
 import type { Socket, Server } from 'socket.io';
 
 import makeId from '../utils/make_id';
+import clientRooms from '../global/client_rooms';
 
 const CREATE_ROOM_EVENT = 'room:create';
 const JOIN_ROOM_EVENT = 'room:join';
 const CLOSE_ROOM_EVENT = 'room:close';
-
-const clientRooms = new Map<string, string>();
 
 const registerRoomHandlers = (socket: Socket, server: Server): void => {
     const createRoom = () => {
