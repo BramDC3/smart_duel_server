@@ -4,6 +4,7 @@ import makeId from '../utils/make_id';
 import duelRooms from '../global/duel_rooms';
 import Duelist from '../models/duelist';
 import DuelRoom from '../models/duel_room';
+import RoomEventData from '../models/room_event_data';
 
 const CREATE_ROOM_EVENT = 'room:create';
 const CLOSE_ROOM_EVENT = 'room:close';
@@ -11,9 +12,13 @@ const JOIN_ROOM_EVENT = 'room:join';
 const START_ROOM_EVENT = 'room:start';
 
 const registerRoomHandlers = (socket: Socket, server: Server): void => {
-    const createRoom = (roomEventData: any) => {
+    const createRoom = (data: RoomEventData) => {
+        const deckList = data.deckList;
+        if (deckList === undefined) {
+            return;
+        }
+
         // Create duelist
-        const deckList = roomEventData.deckList;
         const duelist = new Duelist(socket.id, deckList);
 
         // Create room
@@ -33,8 +38,11 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         console.log(`Room ${roomName} created by socket ${socket.id}`);
     };
 
-    const closeRoom = (roomEventData: any) => {
-        const roomName = roomEventData.roomName;
+    const closeRoom = (data: RoomEventData) => {
+        const roomName = data.roomName;
+        if (roomName === undefined) {
+            return;
+        }
 
         // Emit event
         server.sockets.in(roomName).emit(CLOSE_ROOM_EVENT, {
@@ -54,8 +62,13 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         console.log(`Room ${roomName} was closed`);
     };
 
-    const joinRoom = (roomEventData: any) => {
-        const roomName = roomEventData.roomName;
+    const joinRoom = (data: RoomEventData) => {
+        const roomName = data.roomName;
+        const deckList = data.deckList;
+        if (roomName === undefined || deckList === undefined) {
+            return;
+        }
+
 
         const room = duelRooms.find(duelRoom => duelRoom.roomName === roomName);
 
@@ -82,7 +95,6 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         }
 
         // Create duelist
-        const deckList = roomEventData.deckList;
         const duelist = new Duelist(socket.id, deckList);
 
         // Let duelist join room
