@@ -102,7 +102,10 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         socket.join(roomName);
 
         // Emit event
-        server.sockets.in(roomName).emit(START_ROOM_EVENT, room);
+        server.sockets.in(roomName).emit(START_ROOM_EVENT, {
+            'roomName': roomName,
+            'duelRoom': room
+        });
 
         console.log(`Room ${roomName} joined by socket ${socket.id}`);
     };
