@@ -1,10 +1,10 @@
-import type { Socket, Server } from 'socket.io';
+import type { Socket } from 'socket.io';
 
-import makeId from '../utils/make_id';
-import duelRooms from '../global/duel_rooms';
 import Duelist from '../models/duelist';
-import DuelRoom from '../models/duel_room';
 import RoomEventData from '../models/room_event_data';
+import Container from 'typedi';
+import DataManager from '../data_managers/data_manager';
+import { ServerToken } from '../di';
 
 const CREATE_ROOM_EVENT = 'room:create';
 const CLOSE_ROOM_EVENT = 'room:close';
@@ -12,8 +12,10 @@ const JOIN_ROOM_EVENT = 'room:join';
 const START_ROOM_EVENT = 'room:start';
 const SURRENDER_ROOM_EVENT = 'room:surrender';
 
-const registerRoomHandlers = (socket: Socket, server: Server): void => {
+const registerRoomHandlers = (socket: Socket): void => {
     const createRoom = (data: RoomEventData) => {
+        const dataManager = Container.get(DataManager);
+
         const deckList = data.deckList;
         if (deckList === undefined) {
             return;
@@ -23,23 +25,24 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
         const duelist = new Duelist(socket.id, deckList);
 
         // Create room
-        const roomName = makeId(5);
-        const room = new DuelRoom(roomName);
-        duelRooms.push(room);
+        const room = dataManager.createRoom();
 
         // Let duelist join room
         room.duelists.push(duelist);
-        socket.join(roomName);
+        socket.join(room.roomName);
 
         // Emit event
         socket.emit(CREATE_ROOM_EVENT, {
-            'roomName': roomName
+            'roomName': room.roomName
         });
 
-        console.log(`Room ${roomName} created by socket ${socket.id}`);
+        console.log(`Room ${room.roomName} created by socket ${socket.id}`);
     };
 
     const closeRoom = (data: RoomEventData) => {
+        const server = Container.get(ServerToken);
+        const dataManager = Container.get(DataManager);
+
         const roomName = data.roomName;
         if (roomName === undefined) {
             return;
@@ -50,27 +53,22 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
             'roomName': roomName
         });
 
-        const room = duelRooms.find(duelRoom => duelRoom.roomName === roomName);
-        if (room !== undefined) {
-            // Disconnect socket from room
-            room.duelists.forEach((duelist) => server.sockets.connected[duelist.id].leave(roomName));
-
-            // Delete duel room
-            const roomIndex = duelRooms.indexOf(room);
-            duelRooms.splice(roomIndex, 1);
-        }
+        dataManager.closeRoomByRoomName(roomName);
 
         console.log(`Room ${roomName} was closed`);
     };
 
     const joinRoom = (data: RoomEventData) => {
+        const server = Container.get(ServerToken);
+        const dataManager = Container.get(DataManager);
+
         const roomName = data.roomName;
         const deckList = data.deckList;
         if (roomName === undefined || deckList === undefined) {
             return;
         }
 
-        const room = duelRooms.find(duelRoom => duelRoom.roomName === roomName);
+        const room = dataManager.getRoomByRoomName(roomName);
 
         // Check if room exists
         if (room === undefined) {
@@ -110,12 +108,15 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
     };
 
     const surrenderRoom = (data: RoomEventData) => {
+        const server = Container.get(ServerToken);
+        const dataManager = Container.get(DataManager);
+
         const roomName = data.roomName;
         if (roomName === undefined) {
             return;
         }
 
-        const room = duelRooms.find(duelRoom => duelRoom.roomName === roomName);
+        const room = dataManager.getRoomByRoomName(roomName);
         if (room === undefined) {
             return;
         }
@@ -128,13 +129,7 @@ const registerRoomHandlers = (socket: Socket, server: Server): void => {
             'winnerId': winner?.id
         });
 
-        // TODO: this is duplicate code from the close room event
-        // Disconnect socket from room
-        room.duelists.forEach((duelist) => server.sockets.connected[duelist.id].leave(roomName));
-
-        // Delete duel room
-        const roomIndex = duelRooms.indexOf(room);
-        duelRooms.splice(roomIndex, 1);
+        dataManager.closeRoomByRoomName(roomName);
 
         console.log(`Duelist ${socket.id} surrendered. Room ${roomName} was closed`);
     }

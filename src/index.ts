@@ -1,6 +1,11 @@
+// Required for the dependency injection with TypeDI.
+import 'reflect-metadata';
+
 import http from 'http';
 import config from 'config';
 import createSocket from './socket';
+import { initDependencyInjection } from './di';
+import registerHandlers from './handlers';
 
 const SERVER_PORT = config.get<number>('SERVER_PORT');
 const SERVER_HOSTNAME = config.get<string>('SERVER_HOSTNAME');
@@ -9,6 +14,9 @@ const SERVER_HOSTNAME = config.get<string>('SERVER_HOSTNAME');
     try {
         const server = http.createServer();
         const socket = createSocket(server);
+
+        initDependencyInjection(socket);
+        registerHandlers(socket);
 
         const shutdown = () => {
             socket.close(() => {

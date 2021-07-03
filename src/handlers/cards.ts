@@ -1,13 +1,15 @@
 import type { Socket } from 'socket.io';
-
-import duelRooms from '../global/duel_rooms';
+import Container from 'typedi';
+import DataManager from '../data_managers/data_manager';
 
 const PLAY_CARD_EVENT = 'card:play';
 const REMOVE_CARD_EVENT = 'card:remove';
 
 const registerCardHandlers = (socket: Socket): void => {
     const playCard = (data: any) => {
-        const room = duelRooms.find(duelRoom => duelRoom.duelists.map(duelist => duelist.id).includes(socket.id));
+        const dataManager = Container.get(DataManager);
+
+        const room = dataManager.getRoomByDuelistId(socket.id);
         if (room !== undefined) {
             socket.in(room.roomName).emit(PLAY_CARD_EVENT, data);
         }
@@ -17,7 +19,9 @@ const registerCardHandlers = (socket: Socket): void => {
     };
 
     const removeCard = (data: any) => {
-        const room = duelRooms.find(duelRoom => duelRoom.duelists.map(duelist => duelist.id).includes(socket.id));
+        const dataManager = Container.get(DataManager);
+
+        const room = dataManager.getRoomByDuelistId(socket.id);
         if (room !== undefined) {
             socket.in(room.roomName).emit(REMOVE_CARD_EVENT, data);
         }
