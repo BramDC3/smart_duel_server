@@ -10,7 +10,7 @@ const registerHandlers = (server: Server): void => {
     server.on(CONNECTION_EVENT, (socket) => {
         console.log(`Socket connected: ${socket.id}`,);
 
-        registerGlobalHandlers(socket);
+        registerGlobalHandlers(socket, server);
         registerCardHandlers(socket);
         registerRoomHandlers(socket, server);
     });
